@@ -476,7 +476,7 @@ export function ProductsPage() {
         open={!!conflictInfo}
         onClose={() => setConflictInfo(null)}
         title="Sıralamayı değiştir"
-        size="sm"
+        size="md"
       >
         {conflictInfo && (
           <div className="space-y-4">

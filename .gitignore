@@ -39,3 +39,6 @@ Logo*.jpeg
 Logo*.jpg
 Logo*.png
 *.tsbuildinfo
+local_data.sql
+client/dist/
+client/dist.zip
