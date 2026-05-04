@@ -8,7 +8,7 @@ export const productCreateSchema = z.object({
   slug: z.string().min(1).max(180).optional(),
   description: z.string().max(1000).optional().nullable(),
   price: z.number().nonnegative(),
-  imageUrl: z.string().url().optional().nullable(),
+  imageUrl: z.string().min(1).optional().nullable(),
   isActive: z.boolean().optional(),
   isPopular: z.boolean().optional(),
   isNew: z.boolean().optional(),
