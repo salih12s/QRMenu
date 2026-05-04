@@ -17,6 +17,8 @@ export function QrCodePage() {
 
   // Public menü URL'i (QR'ın yönlendireceği adres)
   const defaultUrl = useMemo(() => {
+    const envUrl = (import.meta.env.VITE_PUBLIC_MENU_URL as string | undefined)?.trim();
+    if (envUrl) return envUrl.replace(/\/$/, '') + '/';
     if (typeof window === 'undefined') return '';
     return `${window.location.origin}/`;
   }, []);
