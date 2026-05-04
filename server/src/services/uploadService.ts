@@ -22,7 +22,10 @@ export interface UploadProvider {
 
 class LocalUploadProvider implements UploadProvider {
   async buildUrl(file: Express.Multer.File): Promise<UploadResult> {
-    const url = `${env.PUBLIC_BASE_URL.replace(/\/+$/, '')}/uploads/${file.filename}`;
+    // Return a relative URL so the client can prefix it with whatever
+    // VITE_PUBLIC_BASE_URL is at runtime. Avoids stale absolute URLs
+    // pointing at localhost when the server's PUBLIC_BASE_URL is missing.
+    const url = `/uploads/${file.filename}`;
     return { url };
   }
 }
