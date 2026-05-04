@@ -1,0 +1,13 @@
+# Railway deployment config — Server (API)
+# Bu dosyay\u0131 Railway servis k\u00f6k\u00fcne (server/) y\u00fckl\u00fcyoruz.
+
+[build]
+builder = "NIXPACKS"
+buildCommand = "npm ci && npm run build"
+
+[deploy]
+startCommand = "npm run start:prod"
+healthcheckPath = "/health"
+healthcheckTimeout = 100
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10

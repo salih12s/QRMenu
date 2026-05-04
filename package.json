@@ -1,0 +1,18 @@
+{
+  "name": "ugurum-cafe-qrmenu",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Uğur'um Cafe QR Dijital Menü — monorepo (client + server)",
+  "scripts": {
+    "dev": "concurrently -n server,client -c yellow.bold,cyan.bold \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "install:all": "npm install && npm install --prefix server && npm install --prefix client",
+    "build": "npm --prefix server run build && npm --prefix client run build",
+    "seed": "npm --prefix server run seed",
+    "prisma:migrate": "npm --prefix server run prisma:migrate"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

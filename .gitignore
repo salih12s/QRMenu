@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Env (NEVER commit secrets)
+.env
+.env.local
+.env.*.local
+client/.env
+server/.env
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Uploads (local dev — runtime user content)
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Prisma
+*.db
+*.db-journal
+
+# Misc dev artefacts
+Logo*.jpeg
+Logo*.jpg
+Logo*.png
+*.tsbuildinfo
