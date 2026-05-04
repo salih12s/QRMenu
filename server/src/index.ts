@@ -32,8 +32,9 @@ app.use('/api/admin', adminRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-app.listen(env.PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${env.PORT}`);
+const PORT = Number(process.env.PORT) || env.PORT;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on 0.0.0.0:${PORT}`);
   console.log(`   Env: ${env.NODE_ENV}`);
   console.log(`   CORS origin: ${env.CORS_ORIGIN}`);
   console.log(`   Upload provider: ${env.UPLOAD_PROVIDER}`);

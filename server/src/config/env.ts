@@ -9,7 +9,7 @@ const envSchema = z.object({
   JWT_EXPIRES_IN: z.string().default('7d'),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
   UPLOAD_PROVIDER: z.enum(['local']).default('local'),
-  PUBLIC_BASE_URL: z.string().url().default('http://localhost:5000'),
+  PUBLIC_BASE_URL: z.string().default('http://localhost:5000'),
 });
 
 const parsed = envSchema.safeParse(process.env);
