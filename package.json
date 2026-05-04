@@ -8,7 +8,10 @@
     "dev:server": "npm --prefix server run dev",
     "dev:client": "npm --prefix client run dev",
     "install:all": "npm install && npm install --prefix server && npm install --prefix client",
-    "build": "npm --prefix server run build && npm --prefix client run build",
+    "build": "npm --prefix server run build",
+    "build:all": "npm --prefix server run build && npm --prefix client run build",
+    "start": "npm --prefix server run start:prod",
+    "postinstall": "npm --prefix server install",
     "seed": "npm --prefix server run seed",
     "prisma:migrate": "npm --prefix server run prisma:migrate"
   },
