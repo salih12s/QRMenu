@@ -7,7 +7,7 @@ export const productCreateSchema = z.object({
   name: z.string().min(1).max(160),
   slug: z.string().min(1).max(180).optional(),
   description: z.string().max(1000).optional().nullable(),
-  price: z.number().nonnegative(),
+  price: z.number().nonnegative().optional().nullable(),
   imageUrl: z.string().min(1).optional().nullable(),
   isActive: z.boolean().optional(),
   isPopular: z.boolean().optional(),

@@ -7,7 +7,7 @@ export interface ProductInput {
   categoryId: number;
   name: string;
   description?: string | null;
-  price: number;
+  price?: number | null;
   imageUrl?: string | null;
   isActive?: boolean;
   isPopular?: boolean;
@@ -61,7 +61,10 @@ export const productService = {
         name: input.name,
         slug,
         description: input.description ?? null,
-        price: new Prisma.Decimal(input.price),
+        price:
+          input.price === null || input.price === undefined
+            ? null
+            : new Prisma.Decimal(input.price),
         imageUrl: input.imageUrl ?? null,
         isActive: input.isActive ?? true,
         isPopular: input.isPopular ?? false,
@@ -99,7 +102,12 @@ export const productService = {
         name: input.name ?? existing.name,
         slug,
         description: input.description ?? existing.description,
-        price: input.price !== undefined ? new Prisma.Decimal(input.price) : existing.price,
+        price:
+          input.price === undefined
+            ? existing.price
+            : input.price === null
+              ? null
+              : new Prisma.Decimal(input.price),
         imageUrl: input.imageUrl ?? existing.imageUrl,
         isActive: input.isActive ?? existing.isActive,
         isPopular: input.isPopular ?? existing.isPopular,

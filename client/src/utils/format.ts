@@ -1,4 +1,5 @@
-export function formatPrice(price: string | number): string {
+export function formatPrice(price: string | number | null | undefined): string {
+  if (price === null || price === undefined || price === '') return '—';
   const num = typeof price === 'string' ? parseFloat(price) : price;
   if (Number.isNaN(num)) return '—';
   return new Intl.NumberFormat('tr-TR', {

@@ -25,7 +25,7 @@ export interface Product {
   name: string;
   slug: string;
   description: string | null;
-  price: string; // Prisma Decimal serializes as string
+  price: string | null; // Prisma Decimal serializes as string
   imageUrl: string | null;
   isActive: boolean;
   isPopular: boolean;

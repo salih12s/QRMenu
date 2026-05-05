@@ -48,7 +48,7 @@ model Product {
   name          String
   slug          String   @unique
   description   String?
-  price         Decimal  @db.Decimal(10, 2)
+  price         Decimal? @db.Decimal(10, 2)
   imageUrl      String?  @map("image_url")
   isActive      Boolean  @default(true) @map("is_active")
   isPopular     Boolean  @default(false) @map("is_popular")

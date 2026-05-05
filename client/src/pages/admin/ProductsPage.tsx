@@ -69,7 +69,7 @@ export function ProductsPage() {
         categoryId: p.categoryId,
         name: p.name,
         description: p.description ?? '',
-        price: String(p.price),
+        price: p.price === null || p.price === undefined ? '' : String(p.price),
         imageUrl: p.imageUrl,
         isActive: p.isActive,
         isPopular: p.isPopular,
@@ -101,7 +101,7 @@ export function ProductsPage() {
         categoryId,
         name: form.name,
         description: form.description || null,
-        price: Number(form.price),
+        price: form.price === '' ? null : Number(form.price),
         imageUrl: form.imageUrl,
         isActive: form.isActive,
         isPopular: form.isPopular,
@@ -187,7 +187,7 @@ export function ProductsPage() {
           categoryId: p.categoryId,
           name: p.name,
           description: p.description,
-          price: Number(p.price),
+          price: p.price === null || p.price === undefined ? null : Number(p.price),
           imageUrl: p.imageUrl,
           isActive: p.isActive,
           isPopular: p.isPopular,
@@ -203,7 +203,7 @@ export function ProductsPage() {
         categoryId,
         name: form.name,
         description: form.description || null,
-        price: Number(form.price),
+        price: form.price === '' ? null : Number(form.price),
         imageUrl: form.imageUrl,
         isActive: form.isActive,
         isPopular: form.isPopular,
@@ -401,15 +401,15 @@ export function ProductsPage() {
           </FieldLabel>
 
           <div className="grid grid-cols-2 gap-3">
-            <FieldLabel label="Fiyat (₺)">
+            <FieldLabel label="Fiyat (₺) (opsiyonel)">
               <input
-                required
                 type="number"
                 step="0.01"
                 min="0"
                 className={inputCls}
                 value={form.price}
                 onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
+                placeholder="Ör. 45"
               />
             </FieldLabel>
             <FieldLabel label="Sıralama">
