@@ -14,6 +14,7 @@ export const productCreateSchema = z.object({
   isNew: z.boolean().optional(),
   isRecommended: z.boolean().optional(),
   allergenInfo: z.string().max(500).optional().nullable(),
+  calories: z.number().int().nonnegative().max(100000).optional().nullable(),
   sortOrder: z.number().int().optional(),
 });
 

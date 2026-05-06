@@ -6,7 +6,7 @@ import { useAuth } from '../../hooks/useAuth';
 export function LoginPage() {
   const { login, isAuthenticated } = useAuth();
   const nav = useNavigate();
-  const [email, setEmail] = useState('admin@ugurumcafe.com');
+  const [email, setEmail] = useState('admin@ugurcafe.com');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

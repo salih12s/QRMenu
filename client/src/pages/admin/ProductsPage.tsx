@@ -20,6 +20,7 @@ interface FormState {
   isNew: boolean;
   isRecommended: boolean;
   allergenInfo: string;
+  calories: string; // string so input can be cleared
   sortOrder: string; // string so input can be cleared
 }
 
@@ -34,6 +35,7 @@ const empty: FormState = {
   isNew: false,
   isRecommended: false,
   allergenInfo: '',
+  calories: '',
   sortOrder: '',
 };
 
@@ -76,6 +78,7 @@ export function ProductsPage() {
         isNew: p.isNew,
         isRecommended: p.isRecommended,
         allergenInfo: p.allergenInfo ?? '',
+        calories: p.calories === null || p.calories === undefined ? '' : String(p.calories),
         sortOrder: String(p.sortOrder),
       });
     } else {
@@ -108,6 +111,7 @@ export function ProductsPage() {
         isNew: form.isNew,
         isRecommended: form.isRecommended,
         allergenInfo: form.allergenInfo || null,
+        calories: form.calories === '' ? null : Number(form.calories),
         sortOrder: newOrder,
       };
 
@@ -194,6 +198,7 @@ export function ProductsPage() {
           isNew: p.isNew,
           isRecommended: p.isRecommended,
           allergenInfo: p.allergenInfo,
+          calories: p.calories,
           sortOrder: shifted,
         });
       }
@@ -210,6 +215,7 @@ export function ProductsPage() {
         isNew: form.isNew,
         isRecommended: form.isRecommended,
         allergenInfo: form.allergenInfo || null,
+        calories: form.calories === '' ? null : Number(form.calories),
         sortOrder: newOrder,
       });
     },
@@ -436,6 +442,18 @@ export function ProductsPage() {
               className={inputCls}
               value={form.allergenInfo}
               onChange={(e) => setForm((f) => ({ ...f, allergenInfo: e.target.value }))}
+            />
+          </FieldLabel>
+
+          <FieldLabel label="Kalori (kcal) (opsiyonel)">
+            <input
+              type="number"
+              inputMode="numeric"
+              min={0}
+              className={inputCls}
+              value={form.calories}
+              onChange={(e) => setForm((f) => ({ ...f, calories: e.target.value }))}
+              placeholder="Ör. 320"
             />
           </FieldLabel>
 

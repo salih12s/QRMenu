@@ -43,6 +43,23 @@ export function ProductCard({ product, onClick }: Props) {
         {product.description && (
           <p className="mt-1 text-sm text-brand-muted line-clamp-2">{product.description}</p>
         )}
+        {(product.calories !== null && product.calories !== undefined) || product.allergenInfo ? (
+          <div className="mt-2 flex flex-wrap gap-1.5 text-[10px] uppercase tracking-wider">
+            {product.calories !== null && product.calories !== undefined && (
+              <span className="px-2 py-0.5 rounded-full border border-brand-border text-brand-muted">
+                {product.calories} kcal
+              </span>
+            )}
+            {product.allergenInfo && (
+              <span
+                className="px-2 py-0.5 rounded-full border border-brand-border text-brand-muted truncate max-w-full"
+                title={product.allergenInfo}
+              >
+                Alerjen: {product.allergenInfo}
+              </span>
+            )}
+          </div>
+        ) : null}
         <div className="mt-3 flex items-center justify-between">
           <span className="text-brand-primary font-bold tracking-wide">
             {formatPrice(product.price)}

@@ -55,6 +55,7 @@ model Product {
   isNew         Boolean  @default(false) @map("is_new")
   isRecommended Boolean  @default(false) @map("is_recommended")
   allergenInfo  String?  @map("allergen_info")
+  calories      Int?     @map("calories")
   sortOrder     Int      @default(0) @map("sort_order")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")

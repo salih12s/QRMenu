@@ -101,6 +101,13 @@ export function ProductModal({ product, onClose }: Props) {
                 </div>
               )}
 
+              {product.calories !== null && product.calories !== undefined && (
+                <div className="mt-3 text-xs text-brand-muted border border-brand-border rounded-xl p-3">
+                  <span className="font-semibold text-brand-primary">Kalori: </span>
+                  {product.calories} kcal
+                </div>
+              )}
+
               <div className="mt-6 flex items-center justify-between">
                 <span className="text-brand-muted text-sm">Fiyat</span>
                 <span className="text-2xl font-bold text-brand-primary">

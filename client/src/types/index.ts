@@ -32,6 +32,7 @@ export interface Product {
   isNew: boolean;
   isRecommended: boolean;
   allergenInfo: string | null;
+  calories: number | null;
   sortOrder: number;
   createdAt: string;
   updatedAt: string;

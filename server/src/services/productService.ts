@@ -14,6 +14,7 @@ export interface ProductInput {
   isNew?: boolean;
   isRecommended?: boolean;
   allergenInfo?: string | null;
+  calories?: number | null;
   sortOrder?: number;
   slug?: string;
 }
@@ -71,6 +72,7 @@ export const productService = {
         isNew: input.isNew ?? false,
         isRecommended: input.isRecommended ?? false,
         allergenInfo: input.allergenInfo ?? null,
+        calories: input.calories ?? null,
         sortOrder: input.sortOrder ?? 0,
       },
       include: PRODUCT_INCLUDE,
@@ -114,6 +116,7 @@ export const productService = {
         isNew: input.isNew ?? existing.isNew,
         isRecommended: input.isRecommended ?? existing.isRecommended,
         allergenInfo: input.allergenInfo ?? existing.allergenInfo,
+        calories: input.calories === undefined ? existing.calories : input.calories,
         sortOrder: input.sortOrder ?? existing.sortOrder,
       },
       include: PRODUCT_INCLUDE,

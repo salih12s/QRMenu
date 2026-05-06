@@ -101,22 +101,28 @@ const CATEGORIES: {
 async function main() {
   console.log('🌱 Seeding database...');
 
-  // 1) Default admin
-  const adminEmail = 'admin@ugurumcafe.com';
-  const adminPassword = '123456';
+  // 1) Default admins
+  const adminPassword = 'Uğurcafe33';
   const passwordHash = await bcrypt.hash(adminPassword, 10);
 
-  await prisma.user.upsert({
-    where: { email: adminEmail },
-    update: {},
-    create: {
-      name: "Uğur'um Cafe Admin",
-      email: adminEmail,
-      passwordHash,
-      role: 'ADMIN',
-    },
-  });
-  console.log(`  ✓ Admin user (${adminEmail})`);
+  const admins = [
+    { email: 'admin@ugurcafe.com', name: "Uğur Cafe Admin" },
+    { email: 'yonetici@ugurcafe.com', name: "Uğur Cafe Yönetici" },
+  ];
+
+  for (const a of admins) {
+    await prisma.user.upsert({
+      where: { email: a.email },
+      update: { passwordHash, name: a.name, role: 'ADMIN' },
+      create: {
+        name: a.name,
+        email: a.email,
+        passwordHash,
+        role: 'ADMIN',
+      },
+    });
+    console.log(`  ✓ Admin user (${a.email})`);
+  }
 
   // 2) Default settings (single row)
   const existingSetting = await prisma.setting.findFirst();
