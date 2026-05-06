@@ -1,13 +1,14 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { QRCodeCanvas } from 'qrcode.react';
-import { Download, Printer, Link as LinkIcon, RefreshCw } from 'lucide-react';
+import { Download, Printer, Link as LinkIcon, RefreshCw, Save } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '../../services/api';
 import type { Setting } from '../../types';
 import { resolveImageUrl } from '../../utils/format';
 
 const FALLBACK_LOGO = '/logo.jpeg';
+const LS_KEY = 'qrMenuUrl';
 
 export function QrCodePage() {
   const { data: settings } = useQuery({
@@ -15,16 +16,26 @@ export function QrCodePage() {
     queryFn: async () => (await api.get<Setting>('/admin/settings')).data,
   });
 
-  // Public menü URL'i (QR'ın yönlendireceği adres)
-  // Not: QR kodlar için IDN/Unicode karakterli host'ları ASCII (punycode) hale getiriyoruz.
-  // Örn. https://uğurcafe.com/ -> https://xn--uurcafe-nbb.com/
+  // Public menü URL'i (QR'ın yönlendireceği adres).
+  // Unicode (IDN) korunur, böylece QR üzerinde "https://uğurcafe.com/" görünür.
   const defaultUrl = useMemo(() => {
     const envUrl = (import.meta.env.VITE_PUBLIC_MENU_URL as string | undefined)?.trim();
     const raw = envUrl || (typeof window !== 'undefined' ? window.location.origin + '/' : '');
-    return toAsciiUrl(raw);
+    return normalizeDisplayUrl(raw);
   }, []);
 
-  const [url, setUrl] = useState(defaultUrl);
+  // localStorage'da kullanıcının daha önce kaydettiği URL varsa onu yükle
+  const [url, setUrl] = useState<string>(() => {
+    if (typeof window === 'undefined') return '';
+    const saved = window.localStorage.getItem(LS_KEY);
+    return saved && saved.trim().length > 0 ? saved : '';
+  });
+
+  // İlk açılışta state boşsa default URL'yi yerleştir
+  useEffect(() => {
+    if (!url && defaultUrl) setUrl(defaultUrl);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultUrl]);
   const [size, setSize] = useState<number>(512);
   const [withLogo, setWithLogo] = useState(true);
   const [bgColor, setBgColor] = useState('#FFFFFF');
@@ -132,6 +143,32 @@ export function QrCodePage() {
     }
   };
 
+  const handleSaveUrl = () => {
+    const trimmed = url.trim();
+    if (!trimmed) {
+      toast.error('URL boş olamaz');
+      return;
+    }
+    const normalized = normalizeDisplayUrl(trimmed);
+    setUrl(normalized);
+    try {
+      window.localStorage.setItem(LS_KEY, normalized);
+      toast.success('URL kaydedildi');
+    } catch {
+      toast.error('Kaydedilemedi');
+    }
+  };
+
+  const handleResetUrl = () => {
+    setUrl(defaultUrl);
+    try {
+      window.localStorage.removeItem(LS_KEY);
+    } catch {
+      // ignore
+    }
+    toast.success('Varsayılana dönüldü');
+  };
+
   return (
     <div className="space-y-6">
       <header>
@@ -156,7 +193,15 @@ export function QrCodePage() {
               />
               <button
                 type="button"
-                onClick={() => setUrl(defaultUrl)}
+                onClick={handleSaveUrl}
+                title="Kaydet"
+                className="px-3 py-2.5 rounded-xl bg-brand-primary text-black font-semibold hover:opacity-90 inline-flex items-center gap-1"
+              >
+                <Save className="h-4 w-4" /> Kaydet
+              </button>
+              <button
+                type="button"
+                onClick={handleResetUrl}
                 title="Varsayılana dön"
                 className="px-3 py-2.5 rounded-xl border border-brand-border text-brand-text hover:border-brand-primary/60 hover:text-brand-primary"
               >
@@ -172,7 +217,7 @@ export function QrCodePage() {
               </button>
             </div>
             <p className="text-[11px] text-brand-muted mt-1.5">
-              Production'da kafenizin gerçek alan adını yazın (ör. https://menu.ugurumcafe.com).
+              Kafenizin gerçek alan adını yazıp Kaydet'e basın. Taraycıda hatırlanır.
             </p>
           </Field>
 
@@ -323,14 +368,14 @@ function escapeHtml(s: string): string {
     .replace(/'/g, '&#39;');
 }
 
-// IDN host'ları punycode'a çevir (örn. uğurcafe.com -> xn--uurcafe-nbb.com)
-function toAsciiUrl(input: string): string {
+// IDN host'ları Unicode olarak korur, sadece eksik slash ekler.
+// Örn. "https://uğurcafe.com" -> "https://uğurcafe.com/"
+function normalizeDisplayUrl(input: string): string {
   if (!input) return input;
-  try {
-    const u = new URL(input);
-    // URL constructor host'u otomatik olarak ASCII (punycode) olarak normalize eder.
-    return u.toString();
-  } catch {
-    return input.replace(/\/$/, '') + '/';
-  }
+  let s = input.trim();
+  // protokol yoksa https ekle
+  if (!/^https?:\/\//i.test(s)) s = 'https://' + s;
+  // çürt mi? sondaki boşlukları temizle, eksik slash'ı ekle
+  if (!/\/$/.test(s) && !s.includes('?') && !s.includes('#')) s = s + '/';
+  return s;
 }
