@@ -16,11 +16,12 @@ export function QrCodePage() {
   });
 
   // Public menü URL'i (QR'ın yönlendireceği adres)
+  // Not: QR kodlar için IDN/Unicode karakterli host'ları ASCII (punycode) hale getiriyoruz.
+  // Örn. https://uğurcafe.com/ -> https://xn--uurcafe-nbb.com/
   const defaultUrl = useMemo(() => {
     const envUrl = (import.meta.env.VITE_PUBLIC_MENU_URL as string | undefined)?.trim();
-    if (envUrl) return envUrl.replace(/\/$/, '') + '/';
-    if (typeof window === 'undefined') return '';
-    return `${window.location.origin}/`;
+    const raw = envUrl || (typeof window !== 'undefined' ? window.location.origin + '/' : '');
+    return toAsciiUrl(raw);
   }, []);
 
   const [url, setUrl] = useState(defaultUrl);
@@ -59,12 +60,7 @@ export function QrCodePage() {
       return;
     }
     const dataUrl = canvas.toDataURL('image/png');
-    const w = window.open('', '_blank', 'noopener');
-    if (!w) {
-      toast.error('Pop-up engellendi');
-      return;
-    }
-    w.document.write(`<!doctype html><html><head><meta charset="utf-8"/>
+    const html = `<!doctype html><html><head><meta charset="utf-8"/>
 <title>${escapeHtml(cafeName)} — QR Menü</title>
 <style>
   *{box-sizing:border-box}
@@ -80,12 +76,51 @@ export function QrCodePage() {
 <div class="sheet"><div class="card">
   <p class="title">${escapeHtml(cafeName)}</p>
   <p class="sub">QR Menü</p>
-  <img class="qr" src="${dataUrl}" alt="QR" />
+  <img id="qr" class="qr" src="${dataUrl}" alt="QR" />
   <p class="scan">Telefon kameranızla okutun</p>
 </div></div>
-<script>window.onload=()=>{setTimeout(()=>window.print(),200)}</script>
-</body></html>`);
-    w.document.close();
+<script>
+  (function(){
+    var img = document.getElementById('qr');
+    function go(){ try { window.focus(); window.print(); } catch(e) {} }
+    if (img && !img.complete) { img.onload = function(){ setTimeout(go, 150); }; }
+    else { setTimeout(go, 150); }
+  })();
+<\/script>
+</body></html>`;
+
+    // 1) Önce yeni pencere dene
+    const w = window.open('', '_blank', 'noopener,noreferrer,width=480,height=720');
+    if (w && w.document) {
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+      return;
+    }
+
+    // 2) Pop-up engellendiyse: gizli iframe ile yazdır (her taraycıda çalışır)
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+    const idoc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!idoc) {
+      toast.error('Yazdırma başlatılamadı');
+      iframe.remove();
+      return;
+    }
+    idoc.open();
+    idoc.write(html);
+    idoc.close();
+    // iframe içindeki script print'i tetikleyecek; sonra temizle
+    setTimeout(() => {
+      try { iframe.contentWindow?.focus(); iframe.contentWindow?.print(); } catch {}
+    }, 400);
+    setTimeout(() => iframe.remove(), 60_000);
   };
 
   const handleCopy = async () => {
@@ -286,4 +321,16 @@ function escapeHtml(s: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+// IDN host'ları punycode'a çevir (örn. uğurcafe.com -> xn--uurcafe-nbb.com)
+function toAsciiUrl(input: string): string {
+  if (!input) return input;
+  try {
+    const u = new URL(input);
+    // URL constructor host'u otomatik olarak ASCII (punycode) olarak normalize eder.
+    return u.toString();
+  } catch {
+    return input.replace(/\/$/, '') + '/';
+  }
 }
