@@ -3,8 +3,14 @@ import path from 'path';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { Request } from 'express';
+import { env } from '../config/env';
 
-const UPLOAD_DIR = path.join(__dirname, '..', '..', 'uploads');
+// Resolve the uploads directory.
+// Priority: explicit UPLOAD_DIR env (e.g. Railway Volume mount path) -> default <server>/uploads
+const DEFAULT_UPLOAD_DIR = path.join(__dirname, '..', '..', 'uploads');
+const UPLOAD_DIR = env.UPLOAD_DIR && env.UPLOAD_DIR.trim().length > 0
+  ? path.resolve(env.UPLOAD_DIR)
+  : DEFAULT_UPLOAD_DIR;
 
 if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
